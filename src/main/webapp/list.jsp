@@ -41,6 +41,11 @@
             padding-top: 10px;
             background-color: whitesmoke;
         }
+        #logout{
+            list-style: none;
+            margin-left: 30px;
+            margin-top: 2px;
+        }
 
     </style>
 </head>
@@ -55,7 +60,7 @@
 <div class="container">
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <div class="container-fluid" style="background-color: whitesmoke">
-            <a class="navbar-brand" href="#" style="margin-left: 60px;" >Trang chủ</a>
+            <a class="navbar-brand" href="/phones" style="margin-left: 30px;" >Trang chủ</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
                     data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
@@ -73,17 +78,24 @@
                         <a class="nav-link" style="margin-left: 60px;"  href="#">Macbook</a>
                     </li>
 
-                    <li class="nav-item">
-                        <a class="nav-link disabled" style="margin-left: 60px;"  href="#" tabindex="-1" aria-disabled="true">Airpod</a>
-                    </li>
+<%--                    <li class="nav-item">--%>
+<%--                        <a class="nav-link disabled" style="margin-left: 60px;"  href="#" tabindex="-1" aria-disabled="true">Airpod</a>--%>
+<%--                    </li>--%>
                     <li class="nav-item">
                         <a class="nav-link active" href="/phones?action=create" style="margin-left: 60px;"  aria-current="page" href="#">Add</a>
                     </li>
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
+                <form class="d-flex" action="/phones" method="get">
+                    <input class="form-control me-2" type="search" name="keyword" placeholder="Search" aria-label="Search">
+                    <input type="hidden" name="action" value="search">
                     <button class="btn btn-outline-dark" type="submit">Search</button>
                 </form>
+
+                <li class="nav-item"  id="logout">
+<%--                    <a class="nav-link active" href="/index.jsp" style="margin-left: 60px;"  aria-current="page" href="#">Log out</a>--%>
+                    <button type="button"  class="btn btn-outline-dark"><a style="color: black" href="index.jsp">Log out</a></button>
+                </li>
+
             </div>
         </div>
     </nav>

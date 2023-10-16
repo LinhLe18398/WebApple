@@ -11,4 +11,5 @@ public interface IPhoneDAO {
     List<Phone> selectAllPhone() throws SQLException;
     boolean deletePhone(int id) throws SQLException;
     boolean updatePhone(Phone phone);
+    List<Phone> searchByName(String keyword) throws SQLException;
 }

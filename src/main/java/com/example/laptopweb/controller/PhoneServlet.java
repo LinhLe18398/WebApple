@@ -58,6 +58,14 @@ public class PhoneServlet extends HttpServlet {
                   }
                   break;
 
+              case "search":
+                  try {
+                      searchByName(req,resp);
+                  } catch (SQLException e) {
+                      throw new RuntimeException(e);
+                  }
+                  break;
+
 
               default:
                   try {
@@ -68,6 +76,17 @@ public class PhoneServlet extends HttpServlet {
                   break;
           }
         }
+
+    private void searchByName(HttpServletRequest req, HttpServletResponse resp) throws SQLException, ServletException, IOException {
+        String keyword = req.getParameter("keyword");
+        List<Phone> phoneList = phoneDAO.selectAllPhone();
+        if (keyword != null && !keyword.isEmpty()){
+            phoneList = phoneDAO.searchByName(keyword);
+        }
+        req.setAttribute("phoneList",phoneList);
+        req.getRequestDispatcher("list.jsp").forward(req,resp);
+
+    }
 
     private void deletePhone(HttpServletRequest req, HttpServletResponse resp) throws SQLException, ServletException, IOException {
         int id = Integer.parseInt(req.getParameter("id"));
