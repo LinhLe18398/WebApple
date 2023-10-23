@@ -89,8 +89,23 @@ public class PhoneDAO implements IPhoneDAO {
     }
 
     @Override
-    public boolean updatePhone(Phone phone) {
-        return false;
+    public boolean updatePhone(Phone phone) throws SQLException {
+        boolean rowUpdated;
+        ConnectJDBC connectJDBC = new ConnectJDBC();
+        connectJDBC.getConnection();
+
+        String query = "update product set name = ?, brand = ?, color = ?, price = ?, urlImage = ? where id = ?";
+        PreparedStatement preparedStatement = connectJDBC.getConnection().prepareStatement(query);
+        preparedStatement.setString(1,phone.getName());
+        preparedStatement.setString(2,phone.getBrand());
+        preparedStatement.setString(3,phone.getColor());
+        preparedStatement.setDouble(4,phone.getPrice());
+        preparedStatement.setString(5,phone.getUrlImage());
+
+        preparedStatement.setInt(6,phone.getId());
+        rowUpdated = preparedStatement.executeUpdate() > 0;
+
+        return rowUpdated;
     }
 
     @Override

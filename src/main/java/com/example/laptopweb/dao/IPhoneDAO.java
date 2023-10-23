@@ -10,6 +10,6 @@ public interface IPhoneDAO {
     Phone selectPhone(int id) throws SQLException;
     List<Phone> selectAllPhone() throws SQLException;
     boolean deletePhone(int id) throws SQLException;
-    boolean updatePhone(Phone phone);
+    boolean updatePhone(Phone phone) throws SQLException;
     List<Phone> searchByName(String keyword) throws SQLException;
 }

@@ -16,6 +16,7 @@ import java.util.List;
 @WebServlet(value = "/phones")
 public class PhoneServlet extends HttpServlet {
     private PhoneDAO phoneDAO;
+
     @Override
     public void init() throws ServletException {
         phoneDAO = new PhoneDAO();
@@ -24,13 +25,20 @@ public class PhoneServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
-        if (action == null){
+        if (action == null) {
             action = "";
         }
-        switch (action){
+        switch (action) {
             case "create":
                 try {
-                    insertPhone(req,resp);
+                    insertPhone(req, resp);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            case "edit":
+                try {
+                    updatePhone(req, resp);
                 } catch (SQLException e) {
                     throw new RuntimeException(e);
                 }
@@ -38,53 +46,82 @@ public class PhoneServlet extends HttpServlet {
         }
     }
 
+    private void updatePhone(HttpServletRequest req, HttpServletResponse resp) throws SQLException, ServletException, IOException {
+        int id = Integer.parseInt(req.getParameter("id"));
+        String name = req.getParameter("name");
+        String brand = req.getParameter("brand");
+        String color = req.getParameter("color");
+        double price = Double.parseDouble(req.getParameter("price"));
+        String urlImage = req.getParameter("urlImage");
+
+        phoneDAO.updatePhone(new Phone(id, name, brand, color, price, urlImage));
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("edit.jsp");
+        requestDispatcher.forward(req, resp);
+    }
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String action = req.getParameter("action");
-        if (action == null){
+        if (action == null) {
             action = "";
         }
-          switch (action){
-              case "create":
-                  showNewForm(req,resp);
-                  break;
+        switch (action) {
+            case "create":
+                showNewForm(req, resp);
+                break;
 
-              case "delete":
-                  try {
-                      deletePhone(req,resp);
-                  } catch (SQLException e) {
-                      throw new RuntimeException(e);
-                  }
-                  break;
+            case "delete":
+                try {
+                    deletePhone(req, resp);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
 
-              case "search":
-                  try {
-                      searchByName(req,resp);
-                  } catch (SQLException e) {
-                      throw new RuntimeException(e);
-                  }
-                  break;
+            case "search":
+                try {
+                    searchByName(req, resp);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+
+            case "edit":
+                try {
+                    showEditForm(req, resp);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
 
 
-              default:
-                  try {
-                      listPhone(req,resp);
-                  } catch (SQLException e) {
-                      throw new RuntimeException(e);
-                  }
-                  break;
-          }
+            default:
+                try {
+                    listPhone(req, resp);
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
+                break;
         }
+    }
+
+    private void showEditForm(HttpServletRequest req, HttpServletResponse resp) throws SQLException, ServletException, IOException {
+        int id = Integer.parseInt(req.getParameter("id"));
+        Phone existingPhone = phoneDAO.selectPhone(id);
+        RequestDispatcher requestDispatcher = req.getRequestDispatcher("edit.jsp");
+        req.setAttribute("phone", existingPhone);
+        requestDispatcher.forward(req, resp);
+    }
 
     private void searchByName(HttpServletRequest req, HttpServletResponse resp) throws SQLException, ServletException, IOException {
         String keyword = req.getParameter("keyword");
         List<Phone> phoneList = phoneDAO.selectAllPhone();
-        if (keyword != null && !keyword.isEmpty()){
+        if (keyword != null && !keyword.isEmpty()) {
             phoneList = phoneDAO.searchByName(keyword);
         }
-        req.setAttribute("phoneList",phoneList);
-        req.getRequestDispatcher("list.jsp").forward(req,resp);
+        req.setAttribute("phoneList", phoneList);
+        req.getRequestDispatcher("list.jsp").forward(req, resp);
 
     }
 
@@ -92,9 +129,9 @@ public class PhoneServlet extends HttpServlet {
         int id = Integer.parseInt(req.getParameter("id"));
         phoneDAO.deletePhone(id);
         List<Phone> phoneList = phoneDAO.selectAllPhone();
-        req.setAttribute("phoneList",phoneList);
+        req.setAttribute("phoneList", phoneList);
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("list.jsp");
-        requestDispatcher.forward(req,resp);
+        requestDispatcher.forward(req, resp);
     }
 
 
@@ -104,24 +141,24 @@ public class PhoneServlet extends HttpServlet {
         String color = req.getParameter("color");
         double price = Double.parseDouble(req.getParameter("price"));
         String urlImage = req.getParameter("urlImage");
-        phoneDAO.insertPhone(new Phone(name,brand,color,price,urlImage));
+        phoneDAO.insertPhone(new Phone(name, brand, color, price, urlImage));
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("create.jsp");
-        requestDispatcher.forward(req,resp);
+        requestDispatcher.forward(req, resp);
 
     }
 
 
     private void showNewForm(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         RequestDispatcher requestDispatcher = req.getRequestDispatcher("create.jsp");
-        requestDispatcher.forward(req,resp);
+        requestDispatcher.forward(req, resp);
     }
 
     private void listPhone(HttpServletRequest req, HttpServletResponse resp) throws SQLException, ServletException, IOException {
         List<Phone> phoneList = phoneDAO.selectAllPhone();
-        req.setAttribute("phoneList",phoneList);
-        System.out.println(phoneList.size());
+        req.setAttribute("phoneList", phoneList);
+//        System.out.println(phoneList.size());
         RequestDispatcher dispatcher = req.getRequestDispatcher("list.jsp");
-        dispatcher.forward(req,resp);
+        dispatcher.forward(req, resp);
     }
 
 }
